@@ -1,7 +1,8 @@
 <?php
 
 if (isset($_COOKIE["username"])) {
-  echo "You are logged in with " . $_COOKIE["username"];
+  echo "You are logged in with " . $_COOKIE["username"] . "<br />";
+  echo "To logout click <a href='logout.php'>here</a>";
   exit();
 }
 
@@ -14,21 +15,16 @@ if (!isset($_POST["username"]) || !isset($_POST["password"])) {
   $statement = $db->prepare($query);
 
   $statement->bind_param("ss", $_POST["username"], $_POST["password"]);
-
   $statement->execute();
-
-  var_dump($_POST["username"]);
-  var_dump($_POST["password");
-
   $result = $statement->get_result();
 
-  if ($result->field_count == 1) {
-      $row = $data->fetch_array();
+  if ($result->num_rows == 1) {
+      $row = $result->fetch_array();
       $username = $row['username'];
 
-      set_cookie("username", $username);
+      setcookie("username", $username);
 
-      echo "You logged in with " . $row['username'];
+      echo "You are now logged in with " . $row['username'];
       exit();
   } else {
      echo "Incorrect user or password";
@@ -39,7 +35,7 @@ if (!isset($_POST["username"]) || !isset($_POST["password"])) {
   <label for="username">Username:</label>
   <input name="username" type="text"/>
   <br/>
-  <label for="username">Password:</label>
+  <label for="password">Password:</label>
   <input name="password" type="password"/>
   <br/>
   <input type="submit" value="Login"/>
